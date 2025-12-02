@@ -1,0 +1,281 @@
+{
+  "scope": "community",
+  "name": "kafka",
+  "version": "0.1.0",
+  "description": "Commands to interact with Apache Kafka using the Kafka CLI",
+  "git": "https://github.com/aux4/kafka",
+  "system": [
+    [
+      "test:kafka-topics --version",
+      "brew:kafka"
+    ]
+  ],
+  "tags": [
+    "kafka",
+    "messaging",
+    "streaming",
+    "cli"
+  ],
+  "profiles": [
+    {
+      "name": "main",
+      "commands": [
+        {
+          "name": "kafka",
+          "execute": [
+            "profile:kafka"
+          ],
+          "help": {
+            "text": "Apache Kafka commands"
+          }
+        }
+      ]
+    },
+    {
+      "name": "kafka",
+      "commands": [
+        {
+          "name": "topic",
+          "execute": [
+            "profile:kafka:topic"
+          ],
+          "help": {
+            "text": "Manage Kafka topics"
+          }
+        },
+        {
+          "name": "message",
+          "execute": [
+            "profile:kafka:message"
+          ],
+          "help": {
+            "text": "Produce and consume messages"
+          }
+        },
+        {
+          "name": "group",
+          "execute": [
+            "profile:kafka:group"
+          ],
+          "help": {
+            "text": "Manage consumer groups"
+          }
+        }
+      ]
+    },
+    {
+      "name": "kafka:topic",
+      "commands": [
+        {
+          "name": "list",
+          "execute": [
+            "kafka-topics --bootstrap-server ${bootstrapServer} --list"
+          ],
+          "help": {
+            "text": "List all Kafka topics",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              }
+            ]
+          }
+        },
+        {
+          "name": "create",
+          "execute": [
+            "kafka-topics --bootstrap-server ${bootstrapServer} --create --topic ${topic} --partitions ${partitions} --replication-factor ${replicationFactor}"
+          ],
+          "help": {
+            "text": "Create a new Kafka topic",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to create",
+                "arg": true
+              },
+              {
+                "name": "partitions",
+                "text": "Number of partitions",
+                "default": "1"
+              },
+              {
+                "name": "replicationFactor",
+                "text": "Replication factor",
+                "default": "1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "describe",
+          "execute": [
+            "kafka-topics --bootstrap-server ${bootstrapServer} --describe --topic ${topic}"
+          ],
+          "help": {
+            "text": "Describe a Kafka topic",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to describe",
+                "arg": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "delete",
+          "execute": [
+            "kafka-topics --bootstrap-server ${bootstrapServer} --delete --topic ${topic}"
+          ],
+          "help": {
+            "text": "Delete a Kafka topic",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to delete",
+                "arg": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "kafka:message",
+      "commands": [
+        {
+          "name": "produce",
+          "execute": [
+            "stdin:kafka-console-producer --bootstrap-server ${bootstrapServer} --topic ${topic}"
+          ],
+          "help": {
+            "text": "Produce messages to a Kafka topic (reads from stdin)",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to produce to",
+                "arg": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "consume",
+          "execute": [
+            "kafka-console-consumer --bootstrap-server ${bootstrapServer} --topic ${topic} param(fromBeginning:--from-beginning) param(group:--group ${group})"
+          ],
+          "help": {
+            "text": "Consume messages from a Kafka topic",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to consume from",
+                "arg": true
+              },
+              {
+                "name": "fromBeginning",
+                "text": "Read messages from the beginning",
+                "default": ""
+              },
+              {
+                "name": "group",
+                "text": "Consumer group ID",
+                "default": ""
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "kafka:group",
+      "commands": [
+        {
+          "name": "list",
+          "execute": [
+            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --list"
+          ],
+          "help": {
+            "text": "List all consumer groups",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              }
+            ]
+          }
+        },
+        {
+          "name": "describe",
+          "execute": [
+            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --describe --group ${group}"
+          ],
+          "help": {
+            "text": "Describe a consumer group",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "group",
+                "text": "Name of the consumer group",
+                "arg": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "delete",
+          "execute": [
+            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --delete --group ${group}"
+          ],
+          "help": {
+            "text": "Delete a consumer group",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "group",
+                "text": "Name of the consumer group to delete",
+                "arg": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
