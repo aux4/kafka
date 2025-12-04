@@ -4,7 +4,6 @@
 aux4 kafka topic delete test-aux4-group-topic 2>/dev/null || true
 aux4 kafka topic create test-aux4-group-topic
 echo "test message" | aux4 kafka message produce test-aux4-group-topic
-sleep 1
 ```
 
 ```afterAll
@@ -15,7 +14,7 @@ aux4 kafka topic delete test-aux4-group-topic 2>/dev/null || true
 ## create consumer group
 
 ```timeout
-15000
+10000
 ```
 
 ```execute

@@ -1,13 +1,14 @@
 {
   "scope": "community",
   "name": "kafka",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Commands to interact with Apache Kafka using the Kafka CLI",
   "git": "https://github.com/aux4/kafka",
   "system": [
     [
       "test:kafka-topics --version",
-      "brew:kafka"
+      "brew:kafka",
+      "sdk:kafka"
     ]
   ],
   "tags": [
@@ -69,7 +70,7 @@
         {
           "name": "list",
           "execute": [
-            "kafka-topics --bootstrap-server ${bootstrapServer} --list"
+            "kafka-topics param(bootstrapServer:bootstrap-server) --list"
           ],
           "help": {
             "text": "List all Kafka topics",
@@ -85,7 +86,7 @@
         {
           "name": "create",
           "execute": [
-            "kafka-topics --bootstrap-server ${bootstrapServer} --create --topic ${topic} --partitions ${partitions} --replication-factor ${replicationFactor}"
+            "kafka-topics param(bootstrapServer:bootstrap-server) --create param(topic) param(partitions) param(replicationFactor:replication-factor)"
           ],
           "help": {
             "text": "Create a new Kafka topic",
@@ -116,7 +117,7 @@
         {
           "name": "describe",
           "execute": [
-            "kafka-topics --bootstrap-server ${bootstrapServer} --describe --topic ${topic}"
+            "kafka-topics param(bootstrapServer:bootstrap-server) --describe param(topic)"
           ],
           "help": {
             "text": "Describe a Kafka topic",
@@ -137,7 +138,7 @@
         {
           "name": "delete",
           "execute": [
-            "kafka-topics --bootstrap-server ${bootstrapServer} --delete --topic ${topic}"
+            "kafka-topics param(bootstrapServer:bootstrap-server) --delete param(topic)"
           ],
           "help": {
             "text": "Delete a Kafka topic",
@@ -163,7 +164,7 @@
         {
           "name": "produce",
           "execute": [
-            "stdin:kafka-console-producer --bootstrap-server ${bootstrapServer} --topic ${topic}"
+            "stdin:kafka-console-producer param(bootstrapServer:bootstrap-server) param(topic)"
           ],
           "help": {
             "text": "Produce messages to a Kafka topic (reads from stdin)",
@@ -184,10 +185,10 @@
         {
           "name": "consume",
           "execute": [
-            "kafka-console-consumer --bootstrap-server ${bootstrapServer} --topic ${topic} param(fromBeginning:--from-beginning) param(group:--group ${group})"
+            "kafka-console-consumer param(bootstrapServer:bootstrap-server) param(topic) param(fromBeginning:from-beginning) param(group) param(timeout:timeout-ms)"
           ],
           "help": {
-            "text": "Consume messages from a Kafka topic",
+            "text": "Consume messages from a Kafka topic (exits after timeout if specified)",
             "variables": [
               {
                 "name": "bootstrapServer",
@@ -208,6 +209,47 @@
                 "name": "group",
                 "text": "Consumer group ID",
                 "default": ""
+              },
+              {
+                "name": "timeout",
+                "text": "Exit after this many milliseconds of no messages",
+                "default": ""
+              }
+            ]
+          }
+        },
+        {
+          "name": "stream",
+          "execute": [
+            "kafka-console-consumer param(bootstrapServer:bootstrap-server) param(topic) param(fromBeginning:from-beginning) param(group) param(timeout:timeout-ms)"
+          ],
+          "help": {
+            "text": "Stream messages continuously from a Kafka topic (keeps listening)",
+            "variables": [
+              {
+                "name": "bootstrapServer",
+                "text": "Kafka bootstrap server address",
+                "default": "localhost:9092"
+              },
+              {
+                "name": "topic",
+                "text": "Name of the topic to stream from",
+                "arg": true
+              },
+              {
+                "name": "fromBeginning",
+                "text": "Start streaming from the beginning",
+                "default": ""
+              },
+              {
+                "name": "group",
+                "text": "Consumer group ID",
+                "default": ""
+              },
+              {
+                "name": "timeout",
+                "text": "Exit after this many milliseconds of no messages",
+                "default": ""
               }
             ]
           }
@@ -220,7 +262,7 @@
         {
           "name": "list",
           "execute": [
-            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --list"
+            "kafka-consumer-groups param(bootstrapServer:bootstrap-server) --list"
           ],
           "help": {
             "text": "List all consumer groups",
@@ -236,7 +278,7 @@
         {
           "name": "describe",
           "execute": [
-            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --describe --group ${group}"
+            "kafka-consumer-groups param(bootstrapServer:bootstrap-server) --describe param(group)"
           ],
           "help": {
             "text": "Describe a consumer group",
@@ -257,7 +299,7 @@
         {
           "name": "delete",
           "execute": [
-            "kafka-consumer-groups --bootstrap-server ${bootstrapServer} --delete --group ${group}"
+            "kafka-consumer-groups param(bootstrapServer:bootstrap-server) --delete param(group)"
           ],
           "help": {
             "text": "Delete a consumer group",
